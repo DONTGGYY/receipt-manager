@@ -160,16 +160,6 @@ input:focus{border-color:#D85A30;background:#fff}
     </div>
     <div class="field-row-2">
       <div>
-        <label>人名</label>
-        <input type="text" id="receiptPerson" placeholder="例：小明">
-      </div>
-      <div>
-        <label>人數</label>
-        <input type="number" id="receiptCount" value="1" min="1" inputmode="numeric">
-      </div>
-    </div>
-    <div class="field-row-2">
-      <div>
         <label>發票號碼</label>
         <input type="text" id="invoiceNo" placeholder="掃描後自動帶入">
       </div>
@@ -466,8 +456,6 @@ async function scanFromFile(input) {
 function saveReceipt() {
   const date    = document.getElementById('receiptDate').value;
   const amount  = parseFloat(document.getElementById('receiptAmount').value);
-  const person  = document.getElementById('receiptPerson').value.trim();
-  const count   = parseInt(document.getElementById('receiptCount').value) || 1;
   const invoiceNo = document.getElementById('invoiceNo').value.trim();
   const sellerTax = document.getElementById('sellerTax').value.trim();
   const sellerName = document.getElementById('sellerName').value.trim();
@@ -476,7 +464,6 @@ function saveReceipt() {
 
   if (!date)              { showToast('⚠️ 請選擇日期'); return; }
   if (!amount || amount <= 0) { showToast('⚠️ 請輸入正確金額'); return; }
-  if (!person)            { showToast('⚠️ 請輸入人名'); return; }
   if (!expenseItem)       { showToast('⚠️ 請輸入費用項目'); return; }
 
   if (sellerTax && sellerName) {
@@ -494,16 +481,12 @@ function saveReceipt() {
     sellerTax,
     sellerName,
     expenseItem,
-    person,
-    count,
     note,
     created: new Date().toISOString()
   });
   saveReceipts(receipts);
 
   document.getElementById('receiptAmount').value = '';
-  document.getElementById('receiptPerson').value = '';
-  document.getElementById('receiptCount').value = '1';
   document.getElementById('invoiceNo').value = '';
   document.getElementById('sellerTax').value = '';
   document.getElementById('sellerName').value = '';
@@ -616,9 +599,7 @@ function fmtDate(d) {
 }
 
 function fmtContent(r) {
-  let content = r.person + '共' + r.count + '人';
-  if (r.note) content = r.note + ' ' + content;
-  return content;
+  return r.note || '';
 }
 
 function getExportRows(receipts) {
